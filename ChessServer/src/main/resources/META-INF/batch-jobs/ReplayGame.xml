@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<job id="replayGame" xmlns="http://xmlns.jcp.org/xml/ns/javaee" version="1.0">
+    <listeners>
+        <listener ref="ReplayGameListener"/>
+    </listeners>
+    <step id="process">
+        <chunk>
+            <reader ref="MoveReader"></reader>
+            <writer ref="MoveWriter"></writer>
+        </chunk>
+    </step>
+</job>

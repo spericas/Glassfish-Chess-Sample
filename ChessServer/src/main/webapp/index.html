@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Chess Client</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <!-- Le styles -->
+        <link href="./css/bootstrap.css" rel="stylesheet">
+        <link href="./css/bootstrap-responsive.css" rel="stylesheet">
+        <link href="./css/chess.css" rel="stylesheet">
+        <!-- Target tablets -->
+        <link href="./css/chess-tablet-large.css" media="(min-width:560px) and (max-width:710px)" rel="stylesheet" />
+        <link href="./css/chess-tablet-small.css" media="(min-width:460px) and (max-width:560px)" rel="stylesheet" />
+        <!-- Target phones -->
+        <link href="./css/chess-phone-large.css" media="(min-width:370px) and (max-width:460px)" rel="stylesheet" />
+        <link href="./css/chess-phone-small.css" media="(max-width:370px)" rel="stylesheet" />
+        <link href="./css/spinner.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="navbar">
+            <div class="navbar-inner">
+                <a id="apptitle" class="brand" data-bind="css: { active: settingsActive }, click: activateSettings" href="#">JavaOne Chess</a>
+                <ul class="nav" data-bind="foreach: boards">
+                    <li data-bind="css: { active: active }, click: $root.activateGame">
+                        <span data-bind="visible: myTurn" class="badge badge-warning myturn">&rarrhk;</span> 
+                        <span data-bind="visible: justObserving" class="badge">&infin;</span> 
+                        <a href="#" data-bind="text: shortTitle"></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div data-bind="template: { name: 'render-games', data: viewGames }"></div>
+        <div data-bind="template: { name: 'render-settings', data: settings, if : settingsActive }"></div>
+        <div data-bind="template: { name: 'render-board', data: selectedBoard, if : selectedBoard }"></div>
+
+        <script type="text/html" id="render-board">
+            <div class="container-fluid">
+                <div class="row-fluid">
+                    <div class="span12">
+                        <h1>Game <span data-bind="text: title"></span></h1>
+                        <p style="position: relative; left: 0px; top: 0px; height: 25px">
+                            <span data-bind="visible: blackTurn" class="badge badge-black-turn">Black's turn</span>
+                            <span data-bind="visible: whiteTurn" class="badge badge-white-turn">White's turn</span>
+                            <span data-bind="text: status" class="badge badge-warning badge-status"></span>
+                        </p>
+                        <p>
+                        <table class="board">
+                            <tbody>
+                                <!-- ko foreach: rows -->
+                                <tr>
+                                    <td class="row-label">
+                                        <span data-bind='text: y'></span>
+                                    </td>
+                                    <!-- ko foreach: columns -->
+                                    <td data-bind="click: $parents[1].selected, css: squareColor" >
+                                        <span data-bind='html: pieceEntity, css: { blackPiece: pieceColor() === "B", whitePiece: pieceColor() === "W" }' class="figure"></span>
+                                    </td>
+                                    <!-- /ko -->
+                                </tr>
+                                <!-- /ko -->
+                                <tr>
+                                    <td class="col-label"></td>
+                                    <!-- ko foreach: columnNames -->
+                                    <td class="row-label">
+                                        <span data-bind='text: $data'></span>
+                                    </td>
+                                    <!-- /ko -->
+                                </tr>
+                            </tbody>
+                        </table>
+                        <button data-bind="click: rotateBoard" class="but-orientation">Rotate Board</button>
+                        <button data-bind="click: $root.leave" class="but-orientation">Leave Game</button>
+                        </p>
+                    </div>
+                </div>
+                <div class="row-fluid">
+                    <div class="span12 log-div">
+                        <h3 class="log-h">Game Log</h3>
+                        <div class="log">                            
+                            <div data-bind="foreach: moves">
+                                <span>
+                                    <!-- ko if: whiteMove -->
+                                    <span data-bind="text: round" class="badge"></span> 
+                                    <!-- /ko -->
+                                    <a href="#" data-bind="html: html, click: $parent.showPosition"></a>,&nbsp;
+                                </span>
+                            </div>                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </script>
+
+        <script type="text/html" id="render-settings">
+            <div class="container-fluid">
+                <h3>Connection Settings</h3>
+                <p>
+                    Status: <span data-bind="text: $root.status"></span>
+                </p>
+                <p>
+                    Name:
+                    <input type="text" data-bind="value: username, enable: $root.disconnected, valueUpdate: 'afterkeydown'" 
+                    class="input-small" placeholder="Name"></input>
+                    Password:
+                    <input type="password" data-bind="value: password, enable: $root.disconnected, valueUpdate: 'afterkeydown'" 
+                    class="input-small" placeholder="Password"></input>
+                </p>
+                <br/>
+                <p>
+                    Chess server URL: 
+                    <input data-bind="value: url, enable: $root.disconnected" class="inpu-xlarge"></input>
+                </p>            
+                <p>
+                    <button data-bind="click: $root.reconnect, enable: ($root.disconnected() && validCredentials()) ">Connect</button>
+                    <button data-bind="click: $root.disconnect, enable: $root.connected">Disconnect</button>
+                </p>
+            </div>
+            <div id="chesscube">
+                <div id="spinner">
+                    <div>&#9812;</div>
+                    <div>&#9819;</div>
+                    <div>&#9814;</div>
+                    <div>&#9821;</div>
+                    <div>&#9816;</div>
+                    <div>&#9823;</div>
+                </div>
+            </div>
+        </script>
+
+        <script type="text/html" id="render-game">
+            <div class="input-append">
+            <input type="text" data-bind="value: description" disabled></input>
+            <!-- ko if: joinable -->
+            <button class="btn btn-success" data-bind="click: $root.joinGame">Join</button>
+            <!-- /ko -->
+            <button class="btn" data-bind="click: $root.observeGame">Observe</button>
+            </div>
+        </script>
+
+        <script type="text/html" id="render-games">
+            <div class="container-fluid">
+                <div data-bind="visible: $root.viewGamesActive ">
+                    <h3>List of Games</h3>
+                    <p>
+                        <a href="#" data-bind="click: $root.refreshGames">Refresh</a>
+                    </p>
+                    <!-- ko if: anyOwnGame() && anyOtherGame() -->
+                    <h4>Own Games</h4>
+                    <!-- /ko -->
+                    <div data-bind="foreach: games">
+                        <!-- ko if: own -->
+                        <div data-bind="template: { name: 'render-game', data: $data }"></div>
+                        <!-- /ko -->
+                    </div>
+                    <!-- ko if: anyOwnGame() && anyOtherGame() -->
+                    <h4>Other Games</h4>
+                    <!-- /ko -->
+                    <div data-bind="foreach: games">
+                        <!-- ko ifnot: own -->
+                        <div data-bind="template: { name: 'render-game', data: $data }"></div>
+                        <!-- /ko -->
+                    </div>
+                    <h3>New game</h3>
+                    <div class="input-append" class="select">
+                        <select data-bind="value: selectedColor">
+                            <option value="W">White</option>
+                            <option value="B">Black</option>
+                        </select>
+                        <button data-bind="click: $root.createGame" class="btn btn-success" >Create Game!</button>
+                    </div>
+                </div>
+			</div>
+        </script>
+        <script src="js/libs/knockout/knockout-min.js"></script>
+        <script src="js/libs/knockout.mapping/knockout.mapping.js"></script>
+        <script src="js/chess.js"></script>
+    </body>
+</html>

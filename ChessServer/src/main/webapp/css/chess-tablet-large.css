@@ -1,0 +1,9 @@
+table.board td {
+    padding: 8px;
+    width: 42px;
+    height: 42px;
+    font-size: 3em;
+}
+h1 {
+    font-size: 22px;
+}

@@ -1,0 +1,101 @@
+/** main chess style **/
+#apptitle {
+    font-size: 20px;
+}
+.log {
+    margin-bottom: 10px;
+}
+table.board td {
+    border: 1px solid black;
+    padding:10px;
+    width: 56px;
+    height: 56px;
+    vertical-align: middle;
+    text-align: center;
+    font-size:4em;
+}
+table.board td.row-label, table.board td.col-label {
+    font-size: 2em;
+    border:none;
+    width:20px;   
+}
+table.board td.col-label {
+    height:20px;
+}
+.container {
+    margin:10px;
+}
+
+table.board td.white {
+    background-color: #D0D0D0;
+}
+table.board td.black {
+    background-color: #A0A0A0;
+}
+table.board td.selected {
+    background-color:  	#bce8f1;
+}
+table.board td.accessible {
+    background-color:  	#a9dba9;
+}
+table.board td.pending {
+    background-color:  	#dbc59e;
+}
+.figure {
+    cursor: pointer;
+}
+.but-orientation {
+    margin-top:20px;
+}
+h3.log-h {
+    border-top:1px solid silver;
+}
+.badge-status {
+    display:inline-block;
+    margin-left:20px;
+    padding:5px;
+    font-size:1em;
+    text-shadow: none;
+}
+.badge-white-turn {
+    font-size: 1em;
+    padding:4px;
+    background-color: white;
+    color:black;
+    text-shadow: none;
+    border:1px solid black;
+    font-weight: normal;
+    display: inline-block;
+    margin-left: 38px;
+}
+.badge-black-turn {
+    font-size: 1em;
+    padding:4px;
+    background-color: black;
+    color:white;
+    text-shadow: none;
+    border:1px solid black;
+    font-weight: normal;
+    display: inline-block;
+    margin-left: 38px;
+}
+.btn {text-shadow: none;}
+.select {line-height: inherit;}
+.uneditable-input {
+    margin-left: 0;
+    color: black;
+}
+span.myturn {
+    display: inline-block;
+    position:relative;
+    left:23px;
+    padding:3px;
+}
+.whitePiece {
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    color: white;
+}
+h1 {
+    font-size: 29px;
+    line-height: initial;
+}
